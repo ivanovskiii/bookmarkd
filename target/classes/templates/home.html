@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <script type="text/javascript">
+        function clearSearch() {
+            window.location = "[[@{/}]]";
+        }
+    </script>
+    <style>
+        .dropdown-menu{
+            height: 300px;
+            overflow: auto;
+        }
+    </style>
+    <title>Bookmark'd</title>
+</head>
+<body>
+
+<nav class="py-2 bg-light border-bottom">
+    <div class="container d-flex flex-wrap">
+        <ul class="nav me-auto">
+            <li class="nav-item"><a href="#" class="nav-link link-dark px-4 active" aria-current="page"><h3>Bookmark'd</h3></a></li>
+        </ul>
+        <ul class="nav">
+            <li class="nav-item"><a th:href="@{'/'}"
+                                    class="btn btn-light">
+                <i class="fa fa-trash">Home</i>
+            </a></li>
+            &nbsp;
+            <li class="nav-item"><a th:href="@{'/shelves'}"
+                                    class="btn btn-light">
+                <i class="fa fa-trash">Shelves</i>
+            </a></li>
+            &nbsp;
+            <li class="nav-item"><a th:href="@{'/authors'}"
+                                    class="btn btn-light">
+                <i class="fa fa-trash">Authors</i>
+            </a></li>
+            <li class="nav-item"><a th:href="@{'/logout'}"
+                                    class="btn btn-light">
+                <i class="fa fa-trash">Log Out</i>
+            </a></li>    </ul>
+    </div>
+</nav>
+<br>
+<div class="container">
+    <div class="d-flex justify-content-center">
+    <h1>Welcome to Bookmark'd!</h1>
+    </div>
+    <div class="containerSearch">
+    <form class="d-flex" th:action="@{/}">
+        <div class="dropdown me-2">
+            <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                Book Genres
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                <li th:each="gen: ${genres}"><a th:href="@{'/genre/book/{genreId}' (genreId=${gen.getId()})}" th:value="${gen.getId()}" class="dropdown-item" th:text="${gen.name}">[genre.name]</a></li>
+<!--                <form th:action="@{'genre/{userBookId}/update' (userBookId=${rb.getId()})}" th:method="GET">-->
+<!--                    <button  type="submit" class="btn btn-primary">Update Book Status</button>-->
+<!--                </form>-->
+            </ul>
+        </div>
+        <input class="form-control me-2" placeholder="Search for a book..." aria-label="Search" type="text" name="keyword" id="keyword" size="50" th:value="${keyword}" required >
+        &nbsp;
+        <button class="btn btn-outline-primary" type="submit">Search</button>
+        &nbsp;
+        <input class="btn btn-outline-dark" type="button" value="Clear" id="btnClear" onclick="clearSearch()" />
+    </form>
+    </div>
+
+    <hr>
+
+    <div class="row g-md-2 justify-content-md-center">
+    <div class="card mb-3 col-md-12" th:each="book:${books}" style="max-width: 540px;">
+    <div class="row g-0">
+        <div class="col-md-4">
+            <img class="img-fluid rounded-start" style="width: 400px", height="650px" th:src="${book.getBookCover()}">
+        </div>
+        <div class="col-md-8">
+            <div class="card-body">
+                <h4 class="card-title" th:text="${book.getName()}">[book.title]</h4>
+                <h5 th:each="aut: ${book.author}"><a th:href="@{'/author/{authorId}' (authorId=${aut.getId()})}" th:text="${aut.name}">[author.name]</a></h5>
+                <p th:text="${book.getDescription()}" class="card-text">[book.desc]</p>
+                <li class="card-text" th:each="gen: ${book.genre}" th:text="${gen.name}"><small class="text-muted">[book.genre]</small></li>
+                <i><p class="card-text" th:text="'Published: ' + ${book.getDatePublished()}"><small class="text-muted">[book.datepublished]</small></p></i>
+                <form th:action="@{'/add-book/book={bookId}' (bookId=${book.getId()})}" th:method="POST">
+                    <button class="btn btn-outline-success" type="submit">To Read</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+</html>
